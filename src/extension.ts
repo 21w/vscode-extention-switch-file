@@ -34,16 +34,19 @@ export function activate(context: vscode.ExtensionContext) {
 
 async function openTestFile(currentPath: string, fileName: string) {
 	// Get the file name without extension
-	const fileNameWithoutExt = fileName.replace(/\.ts$/, '');
+	const fileNameWithoutExt = fileName.replace(/\.(ts|tsx)$/, '');
 
-	// If the path didn't change, it means the file doesn't end with .ts
+	// If the path didn't change, it means the file doesn't end with .ts or .tsx
 	if (fileNameWithoutExt === fileName) {
-		vscode.window.showErrorMessage('Current file is not a .ts file');
+		vscode.window.showErrorMessage('Current file is not a .ts or .tsx file');
 		return;
 	}
 
+	// Determine the file extension
+	const fileExt = fileName.endsWith('.tsx') ? 'tsx' : 'ts';
+
 	// Create a glob pattern to search for the test file
-	const testFilePattern = `**/${fileNameWithoutExt}.test.ts`;
+	const testFilePattern = `**/${fileNameWithoutExt}.test.${fileExt}`;
 
 	try {
 		// Search for the test file in the workspace
@@ -63,17 +66,20 @@ async function openTestFile(currentPath: string, fileName: string) {
 }
 
 async function openImplementationFile(currentPath: string, fileName: string) {
-	// Get the file name without .test.ts extension
-	const fileNameWithoutTestExt = fileName.replace(/\.test\.ts$/, '');
+	// Get the file name without .test.ts or .test.tsx extension
+	const fileNameWithoutTestExt = fileName.replace(/\.test\.(ts|tsx)$/, '');
 
-	// If the path didn't change, it means the file doesn't end with .test.ts
+	// If the path didn't change, it means the file doesn't end with .test.ts or .test.tsx
 	if (fileNameWithoutTestExt === fileName) {
-		vscode.window.showErrorMessage('Current file is not a .test.ts file');
+		vscode.window.showErrorMessage('Current file is not a .test.ts or .test.tsx file');
 		return;
 	}
 
+	// Determine the file extension
+	const fileExt = fileName.endsWith('.test.tsx') ? 'tsx' : 'ts';
+
 	// Create a glob pattern to search for the implementation file
-	const implementationFilePattern = `**/${fileNameWithoutTestExt}.ts`;
+	const implementationFilePattern = `**/${fileNameWithoutTestExt}.${fileExt}`;
 
 	try {
 		// Search for the implementation file in the workspace
