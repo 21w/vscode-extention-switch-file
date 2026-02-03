@@ -2,7 +2,7 @@
   "name": "open-test-file",
   "displayName": "Open Test File",
   "description": "Open test file corresponding to the active file using Command+B",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "engines": {
     "vscode": "^1.108.1"
   },
@@ -46,5 +46,6 @@
     "typescript": "^5.9.3",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2"
-  }
+  },
+  "publisher": "mocha"
 }
