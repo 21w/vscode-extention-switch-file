@@ -1,41 +1,41 @@
 # open-test-file README
 
-VS Code extension that makes it easy to open test files from your source files.
+ソースファイルから対応するテストファイルを簡単に開けるVS Code拡張機能です。
 
-## Features
+## 機能
 
-- **Quick test file navigation**: Press `Command+B` (macOS) to open the corresponding test file
-- **Smart path mapping**: Automatically converts `xxx.ts` to `xxx.test.ts`
-- **Error handling**: Shows helpful error messages if the test file doesn't exist or if the current file is not a TypeScript file
+- **素早いテストファイルナビゲーション**: `Command+B` でテストファイルを開くことができます
+- **自動パス変換**: `xxx.ts` から `xxx.test.ts` に自動的に変換します
+- **エラーハンドリング**: テストファイルが存在しない場合やTypeScript以外のファイルの場合に、適切なエラーメッセージを表示します
 
-## How to Use
+## 使い方
 
-1. Open a TypeScript source file (e.g., `src/utils.ts`)
-2. Press `Command+B`
-3. The corresponding test file (e.g., `src/utils.test.ts`) will open
+1. TypeScriptのソースファイルを開きます（例：`src/utils.ts`）
+2. `Command+B` を押します
+3. 対応するテストファイル（例：`src/utils.test.ts`）が開きます
 
-## Keybindings
+## キーバインディング
 
-| Action | Keybinding |
+| 操作 | キー |
 |--------|-----------|
-| Open Test File | `Command+B` |
+| テストファイルを開く | `Command+B` |
 
-## Requirements
+## 必要な環境
 
-- VS Code 1.108.1 or later
-- TypeScript files with `.ts` extension
-- Test files following the naming convention: `*.test.ts`
+- VS Code 1.108.1 以上
+- `.ts` 拡張子のTypeScriptファイル
+- `*.test.ts` という命名規則に従ったテストファイル
 
-## Known Issues
+## 既知の問題
 
-- Currently supports only `.ts` files. Support for `.js` and other extensions can be added in future versions
-- The extension will show an error if the test file doesn't exist - you'll need to create it first
+- 現在、`.ts` ファイルのみに対応しています。`.js` やその他の拡張子のサポートは今後追加される予定です
+- テストファイルが存在しない場合、拡張機能はエラーを表示します。先にテストファイルを作成する必要があります
 
-## Release Notes
+## リリースノート
 
 ### 1.0.0
 
-Initial release of Open Test File extension with Command+B keybinding support
+Command+B キーバインディング対応のOpen Test File拡張機能を初期リリースしました
 
 ---
 
