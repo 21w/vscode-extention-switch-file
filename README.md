@@ -5,14 +5,15 @@
 ## 機能
 
 - **素早いテストファイルナビゲーション**: `Command+B` でテストファイルを開くことができます
+- **ワークスペース全体から検索**: ファイルツリーの任意の場所にあるテストファイルを自動的に見つけます。同じディレクトリにない場合でも対応しています
 - **自動パス変換**: `xxx.ts` から `xxx.test.ts` に自動的に変換します
 - **エラーハンドリング**: テストファイルが存在しない場合やTypeScript以外のファイルの場合に、適切なエラーメッセージを表示します
 
 ## 使い方
 
-1. TypeScriptのソースファイルを開きます（例：`src/utils.ts`）
+1. TypeScriptのソースファイルを開きます（例：`src/context/User.ts`）
 2. `Command+B` を押します
-3. 対応するテストファイル（例：`src/utils.test.ts`）が開きます
+3. ワークスペース内から対応するテストファイル（例：`tests/User.test.ts`）が自動的に検索され開きます
 
 ## キーバインディング
 
@@ -26,36 +27,30 @@
 - `.ts` 拡張子のTypeScriptファイル
 - `*.test.ts` という命名規則に従ったテストファイル
 
+## 動作原理
+
+拡張機能は以下の流れでテストファイルを検索します：
+
+1. 現在のファイル名（例：`User.ts`）から拡張子を削除
+2. ワークスペース全体から `User.test.ts` にマッチするファイルをグロブパターン（`**/User.test.ts`）で検索
+3. 見つかったテストファイルを開く
+
+複数のテストファイルが見つかった場合は、最初に見つかったものが開きます。
+
 ## 既知の問題
 
 - 現在、`.ts` ファイルのみに対応しています。`.js` やその他の拡張子のサポートは今後追加される予定です
 - テストファイルが存在しない場合、拡張機能はエラーを表示します。先にテストファイルを作成する必要があります
+- 同じ名前のテストファイルが複数存在する場合は、最初に見つかったものが開きます
 
 ## リリースノート
+
+### 1.1.0
+
+- ワークスペース全体からテストファイルを検索する機能を追加
+- ファイル階層が異なる場合でも対応するテストファイルを見つけられるように改善
+- エラーメッセージの改善
 
 ### 1.0.0
 
 Command+B キーバインディング対応のOpen Test File拡張機能を初期リリースしました
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**

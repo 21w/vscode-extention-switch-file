@@ -20,6 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const currentUri = activeEditor.document.uri;
 		const currentPath = currentUri.fsPath;
+		const fileName = path.basename(currentPath);
 
 		// Check if the current file is already a test file
 		if (currentPath.includes('.test.')) {
@@ -27,20 +28,33 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 
-		// Replace .ts with .test.ts
-		const testFilePath = currentPath.replace(/\.ts$/, '.test.ts');
+		// Get the file name without extension
+		const fileNameWithoutExt = fileName.replace(/\.ts$/, '');
 
 		// If the path didn't change, it means the file doesn't end with .ts
-		if (testFilePath === currentPath) {
+		if (fileNameWithoutExt === fileName) {
 			vscode.window.showErrorMessage('Current file is not a .ts file');
 			return;
 		}
 
+		// Create a glob pattern to search for the test file
+		const testFilePattern = `**/${fileNameWithoutExt}.test.ts`;
+
 		try {
-			const testFileUri = vscode.Uri.file(testFilePath);
+			// Search for the test file in the workspace
+			const testFiles = await vscode.workspace.findFiles(testFilePattern);
+
+			if (testFiles.length === 0) {
+				vscode.window.showErrorMessage(`Test file not found for: ${fileName}`);
+				return;
+			}
+
+			// If multiple test files are found, open the first one
+			// (Usually there should be only one, but handle edge cases)
+			const testFileUri = testFiles[0];
 			await vscode.window.showTextDocument(testFileUri);
 		} catch (error) {
-			vscode.window.showErrorMessage(`Failed to open test file: ${testFilePath}`);
+			vscode.window.showErrorMessage(`Failed to open test file: ${error}`);
 		}
 	});
 
