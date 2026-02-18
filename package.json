@@ -2,7 +2,7 @@
   "name": "open-test-file",
   "displayName": "Open Test File",
   "description": "Open test file corresponding to the active file (TypeScript/TSX and Java) using Command+Shift+T",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "engines": {
     "vscode": "^1.108.1"
   },
