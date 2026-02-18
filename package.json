@@ -2,15 +2,12 @@
   "name": "open-test-file",
   "displayName": "Open Test File",
   "description": "Open test file corresponding to the active file (TypeScript/TSX and Java) using Command+Shift+T",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "engines": {
     "vscode": "^1.108.1"
   },
   "categories": [
     "Other"
-  ],
-  "activationEvents": [
-    "onCommand:open-test-file.openTestFile"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -25,9 +22,37 @@
         "command": "open-test-file.openTestFile",
         "key": "cmd+shift+t",
         "mac": "cmd+shift+t",
+        "win": "ctrl+shift+t",
+        "linux": "ctrl+shift+t",
         "when": "editorTextFocus"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Open Test File",
+      "properties": {
+        "openTestFile.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the Open Test File extension"
+        },
+        "openTestFile.typescriptTestPattern": {
+          "type": "string",
+          "default": "{name}.test.{ext}",
+          "description": "Test file naming pattern for TypeScript files. Use {name} for the base filename and {ext} for extension."
+        },
+        "openTestFile.javaTestPattern": {
+          "type": "string",
+          "default": "{name}Test.java",
+          "description": "Test file naming pattern for Java files. Use {name} for the base filename."
+        },
+        "openTestFile.searchScope": {
+          "type": "string",
+          "enum": ["workspace", "sameDirectory"],
+          "default": "workspace",
+          "description": "Scope for searching test files: 'workspace' searches the entire workspace, 'sameDirectory' searches only in the same directory as the source file."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

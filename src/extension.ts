@@ -1,13 +1,26 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import * as path from 'path';
+import * as path from 'node:path';
+
+// Get configuration value
+function getConfig<T>(key: string): T | undefined {
+	const config = vscode.workspace.getConfiguration('openTestFile');
+	return config.get<T>(key);
+}
 
 export function activate(context: vscode.ExtensionContext) {
 
 	console.log('Extension "open-test-file" is now active!');
 
 	const disposable = vscode.commands.registerCommand('open-test-file.openTestFile', async () => {
+		// Check if the extension is enabled
+		const enabled = getConfig<boolean>('enabled');
+		if (enabled === false) {
+			vscode.window.showInformationMessage('Open Test File extension is disabled. Enable it in settings.');
+			return;
+		}
+
 		const activeEditor = vscode.window.activeTextEditor;
 
 		if (!activeEditor) {
@@ -59,8 +72,17 @@ async function openTestFile(currentPath: string, fileName: string) {
 	// Determine the file extension
 	const fileExt = fileName.endsWith('.tsx') ? 'tsx' : 'ts';
 
+	// Get the test pattern from configuration
+	const testPattern = getConfig<string>('typescriptTestPattern') || '{name}.test.{ext}';
+	const testFileName = testPattern.replace('{name}', fileNameWithoutExt).replace('{ext}', fileExt);
+
+	// Get search scope from configuration
+	const searchScope = getConfig<string>('searchScope') || 'workspace';
+
 	// Create a glob pattern to search for the test file
-	const testFilePattern = `**/${fileNameWithoutExt}.test.${fileExt}`;
+	const testFilePattern = searchScope === 'sameDirectory' 
+		? path.join(path.dirname(currentPath), testFileName).replaceAll('\\', '/')
+		: `**/${testFileName}`;
 
 	try {
 		// Search for the test file in the workspace
@@ -80,20 +102,27 @@ async function openTestFile(currentPath: string, fileName: string) {
 }
 
 async function openImplementationFile(currentPath: string, fileName: string) {
-	// Get the file name without .test.ts or .test.tsx extension
+	// Extract the base name and extension
+	// For default pattern {name}.test.{ext}, we remove .test.ts or .test.tsx
 	const fileNameWithoutTestExt = fileName.replace(/\.test\.(ts|tsx)$/, '');
 
-	// If the path didn't change, it means the file doesn't end with .test.ts or .test.tsx
+	// If the path didn't change, it means the file doesn't match the test pattern
 	if (fileNameWithoutTestExt === fileName) {
-		vscode.window.showErrorMessage('Current file is not a .test.ts or .test.tsx file');
+		vscode.window.showErrorMessage('Current file is not a test file');
 		return;
 	}
 
 	// Determine the file extension
 	const fileExt = fileName.endsWith('.test.tsx') ? 'tsx' : 'ts';
 
+	// Get search scope from configuration
+	const searchScope = getConfig<string>('searchScope') || 'workspace';
+
 	// Create a glob pattern to search for the implementation file
-	const implementationFilePattern = `**/${fileNameWithoutTestExt}.${fileExt}`;
+	const implementationFileName = `${fileNameWithoutTestExt}.${fileExt}`;
+	const implementationFilePattern = searchScope === 'sameDirectory'
+		? path.join(path.dirname(currentPath), implementationFileName).replaceAll('\\', '/')
+		: `**/${implementationFileName}`;
 
 	try {
 		// Search for the implementation file in the workspace
@@ -118,8 +147,17 @@ async function openTestFileJava(currentPath: string, fileName: string) {
 	// Get the file name without .java extension
 	const fileNameWithoutExt = fileName.replace(/\.java$/, '');
 
-	// Create a glob pattern to search for the test file (xxTest.java)
-	const testFilePattern = `**/${fileNameWithoutExt}Test.java`;
+	// Get the test pattern from configuration
+	const testPattern = getConfig<string>('javaTestPattern') || '{name}Test.java';
+	const testFileName = testPattern.replace('{name}', fileNameWithoutExt);
+
+	// Get search scope from configuration
+	const searchScope = getConfig<string>('searchScope') || 'workspace';
+
+	// Create a glob pattern to search for the test file
+	const testFilePattern = searchScope === 'sameDirectory'
+		? path.join(path.dirname(currentPath), testFileName).replaceAll('\\', '/')
+		: `**/${testFileName}`;
 
 	try {
 		// Search for the test file in the workspace
@@ -148,8 +186,14 @@ async function openImplementationFileJava(currentPath: string, fileName: string)
 		return;
 	}
 
+	// Get search scope from configuration
+	const searchScope = getConfig<string>('searchScope') || 'workspace';
+
 	// Create a glob pattern to search for the implementation file
-	const implementationFilePattern = `**/${fileNameWithoutTestExt}.java`;
+	const implementationFileName = `${fileNameWithoutTestExt}.java`;
+	const implementationFilePattern = searchScope === 'sameDirectory'
+		? path.join(path.dirname(currentPath), implementationFileName).replaceAll('\\', '/')
+		: `**/${implementationFileName}`;
 
 	try {
 		// Search for the implementation file in the workspace
@@ -170,4 +214,7 @@ async function openImplementationFileJava(currentPath: string, fileName: string)
 	}
 }
 
-export function deactivate() {}
+// This method is called when your extension is deactivated
+export function deactivate() {
+	// Cleanup code can be added here if needed
+}

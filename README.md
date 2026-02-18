@@ -31,15 +31,56 @@
 
 ## キーバインディング
 
-| 操作 | キー |
-|--------|-----------|
-| テストファイルを開く | `Command+Shift+T` |
+| 操作 | macOS | Windows/Linux |
+|--------|-----------|-----------|
+| テストファイルを開く | `Command+Shift+T` | `Ctrl+Shift+T` |
+
+### キーバインディングのカスタマイズ
+
+デフォルトのキーバインドを変更したい場合：
+
+1. VS Codeで `Command+K Command+S` (macOS) または `Ctrl+K Ctrl+S` (Windows/Linux) を押してキーボードショートカット設定を開く
+2. 「Open Test File」を検索
+3. 既存のキーバインドをクリックして、お好みのショートカットキーを設定
+
+または、`keybindings.json`ファイルに直接追加：
+
+```json
+{
+  "key": "cmd+t",  // お好みのキーに変更
+  "command": "open-test-file.openTestFile",
+  "when": "editorTextFocus"
+}
+```
+
+## 設定
+
+この拡張機能は以下の設定をサポートしています（VS Codeの設定から変更可能）：
+
+- `openTestFile.enabled`: 拡張機能の有効/無効を切り替え（デフォルト: `true`）
+- `openTestFile.typescriptTestPattern`: TypeScriptファイルのテスト命名規則（デフォルト: `{name}.test.{ext}`）
+- `openTestFile.javaTestPattern`: Javaファイルのテスト命名規則（デフォルト: `{name}Test.java`）
+- `openTestFile.searchScope`: テストファイルの検索範囲（デフォルト: `workspace`）
+  - `workspace`: ワークスペース全体から検索
+  - `sameDirectory`: ソースファイルと同じディレクトリのみ検索
+
+設定例（`settings.json`）：
+```json
+{
+  "openTestFile.enabled": true,
+  "openTestFile.searchScope": "workspace",
+  "openTestFile.typescriptTestPattern": "{name}.spec.{ext}"
+}
+```
+
+## サポートされているファイル
+
 - サポートされているファイル形式：
   - TypeScript: `.ts` または `.tsx` 拡張子のファイル
   - Java: `.java` 拡張子のファイル
 - テストファイルの命名規則：
-  - TypeScript: `*.test.ts` または `*.test.tsx`
-  - Java: `*Test.java`
+  - TypeScript: `*.test.ts` または `*.test.tsx`（設定でカスタマイズ可能）
+  - Java: `*Test.java`（設定でカスタマイズ可能）
 
 ## 動作原理
 
@@ -64,6 +105,15 @@
 - 同じ名前のテストファイルが複数存在する場合は、最初に見つかったものが開きます
 
 ## リリースノート
+
+### 1.5.0
+
+- カスタマイズ可能な設定を追加
+  - 拡張機能の有効/無効を切り替え可能
+  - テストファイルの命名規則をカスタマイズ可能（TypeScript/Java）
+  - 検索範囲を選択可能（ワークスペース全体 or 同じディレクトリのみ）
+- Windows/Linuxのキーバインド（`Ctrl+Shift+T`）を追加
+- キーバインドのカスタマイズ方法をREADMEに追加
 
 ### 1.4.0
 
