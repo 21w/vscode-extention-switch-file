@@ -19,13 +19,27 @@ export function activate(context: vscode.ExtensionContext) {
 		const currentPath = currentUri.fsPath;
 		const fileName = path.basename(currentPath);
 
-		// Check if the current file is a test file
-		if (currentPath.includes('.test.')) {
-			// Open the implementation file from a test file
-			await openImplementationFile(currentPath, fileName);
+		// Determine file type based on extension
+		if (fileName.endsWith('.java')) {
+			// Java file handling
+			if (fileName.endsWith('Test.java')) {
+				// Open the implementation file from a test file
+				await openImplementationFileJava(currentPath, fileName);
+			} else {
+				// Open the test file from an implementation file
+				await openTestFileJava(currentPath, fileName);
+			}
+		} else if (fileName.endsWith('.ts') || fileName.endsWith('.tsx')) {
+			// TypeScript file handling
+			if (currentPath.includes('.test.')) {
+				// Open the implementation file from a test file
+				await openImplementationFile(currentPath, fileName);
+			} else {
+				// Open the test file from an implementation file
+				await openTestFile(currentPath, fileName);
+			}
 		} else {
-			// Open the test file from an implementation file
-			await openTestFile(currentPath, fileName);
+			vscode.window.showErrorMessage('Only TypeScript (.ts, .tsx) and Java (.java) files are supported');
 		}
 	});
 
@@ -86,6 +100,62 @@ async function openImplementationFile(currentPath: string, fileName: string) {
 		// Filter out test files
 		const allFiles = await vscode.workspace.findFiles(implementationFilePattern);
 		const implementationFiles = allFiles.filter(uri => !uri.fsPath.includes('.test.'));
+
+		if (implementationFiles.length === 0) {
+			vscode.window.showErrorMessage(`Implementation file not found for: ${fileName}`);
+			return;
+		}
+
+		// If multiple implementation files are found, open the first one
+		const implementationFileUri = implementationFiles[0];
+		await vscode.window.showTextDocument(implementationFileUri);
+	} catch (error) {
+		vscode.window.showErrorMessage(`Failed to open implementation file: ${error}`);
+	}
+}
+
+async function openTestFileJava(currentPath: string, fileName: string) {
+	// Get the file name without .java extension
+	const fileNameWithoutExt = fileName.replace(/\.java$/, '');
+
+	// Create a glob pattern to search for the test file (xxTest.java)
+	const testFilePattern = `**/${fileNameWithoutExt}Test.java`;
+
+	try {
+		// Search for the test file in the workspace
+		const testFiles = await vscode.workspace.findFiles(testFilePattern);
+
+		if (testFiles.length === 0) {
+			vscode.window.showErrorMessage(`Test file not found for: ${fileName}`);
+			return;
+		}
+
+		// If multiple test files are found, open the first one
+		const testFileUri = testFiles[0];
+		await vscode.window.showTextDocument(testFileUri);
+	} catch (error) {
+		vscode.window.showErrorMessage(`Failed to open test file: ${error}`);
+	}
+}
+
+async function openImplementationFileJava(currentPath: string, fileName: string) {
+	// Get the file name without Test.java extension
+	const fileNameWithoutTestExt = fileName.replace(/Test\.java$/, '');
+
+	// If the path didn't change, it means the file doesn't end with Test.java
+	if (fileNameWithoutTestExt === fileName.replace(/\.java$/, '')) {
+		vscode.window.showErrorMessage('Current file is not a Test.java file');
+		return;
+	}
+
+	// Create a glob pattern to search for the implementation file
+	const implementationFilePattern = `**/${fileNameWithoutTestExt}.java`;
+
+	try {
+		// Search for the implementation file in the workspace
+		// Filter out test files
+		const allFiles = await vscode.workspace.findFiles(implementationFilePattern);
+		const implementationFiles = allFiles.filter(uri => !uri.fsPath.includes('Test.java'));
 
 		if (implementationFiles.length === 0) {
 			vscode.window.showErrorMessage(`Implementation file not found for: ${fileName}`);
