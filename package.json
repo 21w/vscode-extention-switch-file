@@ -25,7 +25,7 @@
         "mac": "cmd+shift+t",
         "win": "ctrl+shift+t",
         "linux": "ctrl+shift+t",
-        "when": "editorTextFocus"
+        "when": "editorTextFocus && (resourceLangId == typescript || resourceLangId == typescriptreact || resourceLangId == java)"
       }
     ],
     "configuration": {
@@ -48,7 +48,10 @@
         },
         "openTestFile.searchScope": {
           "type": "string",
-          "enum": ["workspace", "sameDirectory"],
+          "enum": [
+            "workspace",
+            "sameDirectory"
+          ],
           "default": "workspace",
           "description": "Scope for searching test files: 'workspace' searches the entire workspace, 'sameDirectory' searches only in the same directory as the source file."
         }
@@ -61,17 +64,23 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package": "npm run compile && vsce package --out open-test-file.vsix"
   },
   "devDependencies": {
-    "@types/vscode": "^1.108.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "typescript-eslint": "^8.52.0",
+    "@types/vscode": "^1.108.1",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^2.32.0",
     "eslint": "^9.39.2",
     "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "typescript-eslint": "^8.52.0"
   },
-  "publisher": "mocha"
+  "publisher": "mocha",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/21w/vscode-extention-switch-file.git"
+  }
 }

@@ -2,6 +2,22 @@
 
 ソースファイルから対応するテストファイルを簡単に開けるVS Code拡張機能です。
 
+## インストール
+
+### VS Code Marketplace から
+[VS Code Marketplace](https://marketplace.visualstudio.com/search?term=open-test-file&target=VSCode) で「open-test-file」を検索してインストール
+
+### GitHub Releases から
+1. [GitHub Releases](https://github.com/21w/vscode-extention-switch-file/releases) ページから最新の `open-test-file.vsix` ファイルをダウンロード
+2. VS Code で `Command+Shift+P` (macOS) / `Ctrl+Shift+P` (Windows/Linux) を押してコマンドパレットを開く
+3. 「Install from VSIX」を検索して実行
+4. ダウンロードした `open-test-file.vsix` ファイルを選択
+
+### コマンドラインからのインストール
+```bash
+code --install-extension /path/to/open-test-file.vsix
+```
+
 ## 機能
 
 - **双方向トグル機能**: `Command+Shift+T` で実装ファイル ⇄ テストファイルを切り替えできます
